@@ -1,6 +1,6 @@
 ## Bifrost
 
-_Connects our tiny dev machines with Amazon's giant cloud._
+_Connects our puny dev machines with Amazon's giant cloud._
 
 Command line interface for Uamuzi Bora test instances on EC2.
 
