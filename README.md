@@ -9,12 +9,14 @@ Command line interface for Uamuzi Bora test instances on EC2.
  * Python 2.7.x
  * Boto: `pip install boto`
  * Your AWS credentials available in your environment:
+
 ```shell
 AWS_SECRET_ACCESS_KEY=xxxxxxxxxx
 AWS_ACCESS_KEY_ID=xxxxxxxxxxx
 export AWS_SECRET_ACCESS_KEY
 export AWS_ACCESS_KEY_ID
 ```
+
 or better: define them in your `.bash_profile` or `.zshrc`
 
 ### Usage
