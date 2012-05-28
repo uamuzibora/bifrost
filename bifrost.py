@@ -86,14 +86,11 @@ def main():
             sys.exit()
         elif opt in ("-l", "--list"):
             # List all UB instances
-            filters = {}
-            filters['tag:Project'] = "UB" 
-            instances = activeInstances('Project', filters)
-            numinstances = len(instances)
-            if numinstances == 1:
-                print instances[0][1]
+            instances = findMyInstances(username)
+            if len(instances) == 0:
+                print "You have no UB instances running on EC2."
                 sys.exit()
-            elif numinstances == 0  or numinstances > 1:
+            else:
                 for pair in sorted(instances, key=lambda p: p[0]):
                     print "%s\t%s" % pair
                 sys.exit()
