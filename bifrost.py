@@ -21,16 +21,6 @@ def usage():
     print >>stderr, """Usage: bifrost [--start COMMIT] [--stop COMMIT] [--list] [--dump COMMIT] [--ssh COMMIT]"""
     sys.exit()
 
-def christen(commit):
-    """Creates a name for the new instance"""
-    name = username + "-" + commit
-    return name
-
-def findInstanceURL(name):
-    """Returns the URL of the specified instance"""
-    
-    return url
-
 def activeInstances(label_tag, filters):
     instances = []
     kwargs = {}
