@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 import sys
+from sys import stderr
 import getopt
 import boto.ec2
 import os
-from sys import stderr
-import time
+import git
 
 # Make sure these are set correctly
 username = "kenrick"
