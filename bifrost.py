@@ -18,9 +18,11 @@ ami = "ami-7b93a90f" # The AMI ID of our base instance on EC2
 dbRootPassword = "Out6Of7Africa42" # Password for root MySQL user on EC2 instance
 
 def usage():
+    print >>stderr, """Usage: bifrost [--start] [--stop] [--list] [--dump] [--ssh]"""
     sys.exit()
 
 def activeInstances(label_tag, filters):
+    """Returns a list of all EC2 instances specified by <filters> arguments, listed by <label_tag>"""
     instances = []
     kwargs = {}
     if filters:
