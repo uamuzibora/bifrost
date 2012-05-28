@@ -142,6 +142,23 @@ def main():
             # Check are deploy the specified commit
             sys.exit()
         elif opt in ("-S", "--stop"):
+            # Stop the all the instances belonging to you
+            instances = findMyInstances(username)
+            if len(instances) == 0:
+                print "You have no running UB instances on EC2."
+                sys.exit()
+            else:
+                print "You have the following UB instances running on EC2:"
+                for pair in sorted(instances, key=lambda p: p[0]):
+                    print "%s\t%s" % pair
+                print "Terminating the above instances..."
+                conn = connectEC2()
+                kwargs = {}
+                filters = {}
+                filters['tag:Project'] = "UB"
+                filters['tag:Owner'] =  username
+                kwargs['filters'] = filters
+                conn.terminate_instances([reservation.instances[0].id for reservation in conn.get_all_instances(**kwargs)])
             sys.exit()
         else:
             print >>stderr, "Unrecognised option or argument."
