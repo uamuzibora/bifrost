@@ -8,13 +8,14 @@ import os
 import git
 
 # Make sure these are set correctly
-username = "kenrick"
-sshKeyPath = "~/.ssh/UamuziBora.pem"
+username = "kenrick" # i.e. your firstname
+sshKeyPath = "~/.ssh/UamuziBora.pem" # Path to wherever you put the UmauziBora.pem key
+nafasiPath = "~/Documents/Projects/UamuziBora/Code/nafasi" # Path to your local repo of Nafasi
 
 # Do not change these!
-tag = "Name"
 conn = None
-ami = "ami-7b93a90f"
+ami = "ami-7b93a90f" # The AMI ID of our base instance on EC2
+dbRootPassword = "Out6Of7Africa42" # Password for root MySQL user on EC2 instance
 
 def usage():
     print >>stderr, """Usage: bifrost [--start COMMIT] [--stop COMMIT] [--list] [--dump COMMIT] [--ssh COMMIT]"""
