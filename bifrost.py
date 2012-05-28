@@ -37,6 +37,16 @@ def activeInstances(label_tag, filters):
                 instances.append(pair)
     return instances
 
+def findMyInstances(user):
+    """Returns a list of all EC2 instances with the 'Owner' tag specified by <user>"""
+    conn = connectEC2()
+    filters = {}
+    filters['tag:Project'] = "UB"
+    filters['tag:Owner'] =  username
+    instances = activeInstances('Name', filters)
+    return instances
+
+
 def connectEC2():
     """Establishs Boto connection with eu-west-1"""
     regions = boto.ec2.regions()
