@@ -59,7 +59,7 @@ def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hld:m:s:S:", ["help", "list", "dump=", "ssh=", "start=", "stop="])
     except getopt.GetoptError, err:
-        print >>sys.stderr, err
+        print >>stderr, err
         usage()
         sys.exit(2)
         
@@ -74,9 +74,9 @@ def main():
     # Check that we've got our AWS credentials
     if not aws_key or not aws_secret:
         if not aws_key:
-            print >>sys.stderror, "AWS_ACCESS_KEY_ID not set in environment"
+            print >>stderr, "AWS_ACCESS_KEY_ID not set in environment"
         if not aws_secret:
-            print >>sys.stderror, "AWS_SECRET_ACCESS_KEY not set in environment"
+            print >>stderr, "AWS_SECRET_ACCESS_KEY not set in environment"
         sys.exit(2)
     
     # Perform the requested actions
