@@ -53,11 +53,12 @@ def connectEC2():
     eu = regions[0]
     conn = eu.connect()
     return conn
-
+    
 def main():
+    
     # Parse arguments with getopt
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hld:m:s:S:", ["help", "list", "dump=", "ssh=", "start=", "stop="])
+        opts, args = getopt.getopt(sys.argv[1:], "hldmsS", ["help", "list", "dump", "ssh", "start", "stop"])
     except getopt.GetoptError, err:
         print >>stderr, err
         usage()
@@ -82,6 +83,7 @@ def main():
     # Perform the requested actions
     for opt, arg in opts:
         if opt in ("-h", "--help"):
+            # Help
             usage()
             sys.exit()
         elif opt in ("-l", "--list"):
