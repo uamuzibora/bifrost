@@ -124,6 +124,19 @@ def main():
             sys.exit()
         elif opt in ("-m", "--ssh"):
             # Open SSH connection to host
+            instances = findMyInstances(username)
+            if len(instances) == 0:
+                print >>stderr, "You have no running UB instances on EC2 to connect to."
+                sys.exit(2)
+            elif len(instances) > 1:
+                print >>stderr, "You have >1 running UB instances on EC2 - I don't know which one to connect to. Please kill excess instances."
+                sys.exit(2)
+            else:
+                try:
+                    os.system('ssh -i ' + sshKeyPath + ' ubuntu@' + instances[0][1])
+                except Exception, err:
+                    print >>stderr, err
+                    sys.exit(2)
             sys.exit()
         elif opt in ("-s", "--start"):
             # Check are deploy the specified commit
