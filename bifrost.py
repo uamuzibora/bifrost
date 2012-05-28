@@ -18,7 +18,6 @@ ami = "ami-7b93a90f" # The AMI ID of our base instance on EC2
 dbRootPassword = "Out6Of7Africa42" # Password for root MySQL user on EC2 instance
 
 def usage():
-    print >>stderr, """Usage: bifrost [--start COMMIT] [--stop COMMIT] [--list] [--dump COMMIT] [--ssh COMMIT]"""
     sys.exit()
 
 def activeInstances(label_tag, filters):
@@ -86,17 +85,16 @@ def main():
                 for pair in sorted(instances, key=lambda p: p[0]):
                     print "%s\t%s" % pair
                 sys.exit()
-        elif opt in ("-d", "--dump") and len(arg) == 7:
-            # Perform MySQL dump and SCP it to the current working directory
+        elif opt in ("-d", "--dump"):
+            # Dump MySQL db and SCP it to the current working directory
             sys.exit()
-        elif opt in ("-m", "--ssh") and len(arg) == 7:
+        elif opt in ("-m", "--ssh"):
             # Open SSH connection to host
             sys.exit()
-        elif opt in ("-s", "--start") and len(arg) == 7:
+        elif opt in ("-s", "--start"):
             # Check are deploy the specified commit
             sys.exit()
-        elif opt in ("-S", "--stop") and len(arg) == 7:
-            # Stop the specified instance
+        elif opt in ("-S", "--stop"):
             sys.exit()
         else:
             print >>stderr, "Unrecognised option or argument."
