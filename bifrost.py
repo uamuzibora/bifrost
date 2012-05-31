@@ -5,12 +5,13 @@ from sys import stderr
 import getopt
 import boto.ec2
 import os
-import git
+from github import Github
 
 # Make sure these are set correctly
-username = "kenrick" # i.e. your firstname
+username = "kenners" # your GitHub username
 sshKeyPath = "~/.ssh/UamuziBora.pem" # Path to wherever you put the UmauziBora.pem key
-nafasiPath = "~/Documents/Projects/UamuziBora/Code/nafasi" # Path to your local repo of Nafasi
+repoName = "nafasi" # Repo name on GH
+orgName = "uamuzibora" # Organisation that owns the repo
 
 # Do not change these!
 conn = None
@@ -138,7 +139,43 @@ def main():
                     sys.exit(2)
             sys.exit()
         elif opt in ("-s", "--start"):
-            # Check are deploy the specified commit
+            # Housekeeping to interface with GitHub
+            commitId = arg
+            commitExists = False
+            hub = Github()
+            repo = hub.get_organization(orgName).get_repo(repoName)
+            
+            # Grab all the commits
+            repoCommits = repo.get_commits()
+            
+            # Find out if we're deploying HEAD or a specified commit
+            if not commitId or commitId.lower() == 'head':
+                # Set commitId to be the *actual* sha1 hash rather than head
+                commitId = repo.get_git_ref("refs/heads/dev").object['sha']
+                    
+            # Find if the specified commit id actually exists
+            for commit in repoCommits:
+                if commit.sha == commitId:
+                    commitExists = True
+                    break
+                # What about if we're using a short sha1 hash (i.e. first 7 characters)
+                elif commit.sha[:7] == commitId[:7]:
+                    commitExists = True
+                    # And now that we've found a commit, let's set our commitId to be the full length one
+                    commitId = commit.sha
+                    break
+            # Quit if we can't find our commit on GitHub
+            if commitExists is False:
+                print >>stderr, "Error: Commit is not found on GitHub. Have you pushed your commit?"
+                sys.exit(2)
+            # Ok, now lets boot the EC2 image, pull this commit into the EC2 image and deploy it onto Tomcat
+            
+            # Stuff to get the Git repo to update on the EC2 image
+            # git clone git://github.com/uamuzibora/nafasi.git
+            # git remote update
+            # git pull --all
+            # git checkout <commit-id>
+            
             sys.exit()
         elif opt in ("-S", "--stop"):
             # Stop the all the instances belonging to you
