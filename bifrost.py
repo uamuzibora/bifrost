@@ -6,13 +6,14 @@ import getopt
 import boto.ec2
 import os
 from github import Github
+import time
 
 # Make sure these are set correctly
 username = "kenners" # your GitHub username
 sshKeyPath = "~/.ssh/UamuziBora.pem" # Path to wherever you put the UmauziBora.pem key
 repoName = "nafasi" # Repo name on GH
 orgName = "uamuzibora" # Organisation that owns the repo
-
+awsKeyPair = "UamuziBora"
 # Do not change these!
 conn = None
 ami = "ami-7b93a90f" # The AMI ID of our base instance on EC2
@@ -59,7 +60,7 @@ def main():
     
     # Parse arguments with getopt
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hldmsS", ["help", "list", "dump", "ssh", "start", "stop"])
+        opts, args = getopt.getopt(sys.argv[1:], "hldmSs:", ["help", "list", "dump", "ssh", "stop", "start="])
     except getopt.GetoptError, err:
         print >>stderr, err
         usage()
@@ -146,14 +147,20 @@ def main():
             repo = hub.get_organization(orgName).get_repo(repoName)
             
             # Grab all the commits
+            print "Indexing commits on GitHub..."
             repoCommits = repo.get_commits()
             
             # Find out if we're deploying HEAD or a specified commit
             if not commitId or commitId.lower() == 'head':
                 # Set commitId to be the *actual* sha1 hash rather than head
+                print "Finding SHA1 hash for HEAD on dev..."
                 commitId = repo.get_git_ref("refs/heads/dev").object['sha']
-                    
+                print "Found: HEAD on dev is " + commitId
+            if len(commitId) < 7:
+            	print >>stderr, "Error: Commit ID < 7 characters. You must specify 'HEAD' or at least the first 7 digits of the SHA1 commit ID hash in order to launch an instance."
+                sys.exit(2)
             # Find if the specified commit id actually exists
+            print "Checking to see if commit " + commitId + " exists on GitHub..."
             for commit in repoCommits:
                 if commit.sha == commitId:
                     commitExists = True
@@ -168,13 +175,43 @@ def main():
             if commitExists is False:
                 print >>stderr, "Error: Commit is not found on GitHub. Have you pushed your commit?"
                 sys.exit(2)
+            print "Found commit " + commitId + " on GitHub"
             # Ok, now lets boot the EC2 image, pull this commit into the EC2 image and deploy it onto Tomcat
-            
-            # Stuff to get the Git repo to update on the EC2 image
-            # git clone git://github.com/uamuzibora/nafasi.git
-            # git remote update
-            # git pull --all
-            # git checkout <commit-id>
+            print "Creating new EC2 instance based on " + ami
+            conn = connectEC2()
+            reservation = conn.run_instances(image_id=ami, \
+            key_name=awsKeyPair, \
+            security_groups=["UBOpenMRS"], \
+            instance_type="t1.micro", \
+            instance_initiated_shutdown_behavior="terminate")
+            instance = reservation.instances[0]
+            # Tag our new instance appropriately
+            print "New instance is " + instance.id
+            print "Tagging new instance with Name: " + commitId[:7] + ", Owner: " + username + ", Project: UB"
+            conn.create_tags([instance.id], {"Name": commitId[:7], "Owner": username, "Project": "UB"})
+            # Loop until instance booted
+            print "Waiting for instance to finish booting..."
+            while instance.update() == 'pending':
+            	print "."
+                time.sleep(2)
+            if instance.state == 'running':
+            	print "Instance " + instance.id + " (" + commitId[:7] +") is running. Public DNS is " + instance.public_dns_name
+                # Let's update the EC2 image
+                # cd /opt/nafasi
+                # git remote update
+                # git pull --all
+                # git checkout <commitid>
+                #try:
+                #    os.system("ssh -i " + sshKeyPath + " ubuntu@" + instance.public_dns_name + " " + updateScript)
+                #except Exception, err:
+                #    print >>stderr, err
+                #    sys.exit(2)
+            else:
+                print >>stderr, "Error: Unexpected instance state: " + instance.state
+                sys.exit(2)
+                
+            # update mysql
+            # launch tomcat
             
             sys.exit()
         elif opt in ("-S", "--stop"):
