@@ -61,7 +61,7 @@ def main():
     
     # Parse arguments with getopt
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hldmSs:", ["help", "list", "dump", "ssh", "stop", "start="])
+        opts, args = getopt.getopt(sys.argv[1:], "hldemSs:", ["help", "list", "dump", "ssh", "mosh", "stop", "start="])
     except getopt.GetoptError, err:
         print >>stderr, err
         usage()
@@ -124,7 +124,7 @@ def main():
                         print >>stderr, err
                         sys.exit(2)
             sys.exit()
-        elif opt in ("-m", "--ssh"):
+        elif opt in ("-e", "--ssh"):
             # Open SSH connection to host
             instances = findMyInstances(username)
             if len(instances) == 0:
@@ -140,6 +140,22 @@ def main():
                     print >>stderr, err
                     sys.exit(2)
             sys.exit()
+        elif opt in ("-m", "--mosh"):
+                # Open SSH connection to host
+                instances = findMyInstances(username)
+                if len(instances) == 0:
+                    print >>stderr, "You have no running UB instances on EC2 to connect to."
+                    sys.exit(2)
+                elif len(instances) > 1:
+                    print >>stderr, "You have >1 running UB instances on EC2 - I don't know which one to connect to. Please kill excess instances."
+                    sys.exit(2)
+                else:
+                    try:
+                        os.system('mosh --ssh="ssh -i ' + sshKeyPath + '" ubuntu@' + instances[0][1])
+                    except Exception, err:
+                        print >>stderr, err
+                        sys.exit(2)
+                sys.exit()    
         elif opt in ("-s", "--start"):
             # Housekeeping to interface with GitHub
             commitId = arg
