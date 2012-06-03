@@ -1,0 +1,64 @@
+#!/bin/sh
+
+# This script is intended to be called by cloud-init as part of the instance bootstrap process.
+# This in turn is only intended to be called by bifrost.py
+
+set -e
+
+COMMIT_ID=$1
+DB_ROOT_PASSWORD=$2
+
+# Check to see if COMMIT_ID was set
+if [ -z $COMMIT_ID ]
+	then
+		echo "ERROR: No commit ID specified! Quitting."
+		echo "Usage: ./bootstrap.sh <git commit id> <mysql root password>"
+    	exit 2
+fi
+
+if [ -z $DB_ROOT_PASSWORD ]
+	then
+		echo "ERROR: No MySQL password specified! Quitting."
+		echo "Usage: ./bootstrap.sh <git commit id> <mysql root password>"
+    	exit 2
+fi
+
+
+echo "Changing into /opt/nafasi"
+cd /opt/nafasi
+
+# Update Git repo and checkout the specified commit
+echo "Updating Git remotes..."
+git remote update
+echo "Executing git pull..."
+git pull --all
+echo "Checking out $COMMIT_ID..."
+git checkout $COMMIT_ID
+
+# Check to see if we've successfully got the commit we wanted
+CURRENT_COMMIT_ID=`git rev-parse HEAD`
+
+if [ "$COMMIT_ID" != "$CURRENT_COMMIT_ID" ]
+	then
+		echo "ERROR: Checked out commit ($CURRENT_COMMIT_ID) does not match specified commit ($COMMIT_ID). Quitting."
+		exit 2
+fi
+
+# Copy our new version of OpenMRS into Tomcat's webapps directory
+cp -R /opt/nafasi/openmrs /opt/tomcat6/webapps/openmrs
+
+# Update MySQL
+echo "Dropping existing openmrs db..."
+mysql -u root --password=$DB_ROOT_PASSWORD -e "DROP DATABASE IF EXISTS openmrs;"
+echo "Creating new openmrs db..."
+mysql -u root --password=$DB_ROOT_PASSWORD -e "CREATE DATABASE openmrs CHARACTER SET utf8;"
+echo "Importing MySQL dump from Nafasi repo..."
+mysql -u root --password=$DB_ROOT_PASSWORD -e "SET FOREIGN_KEY_CHECKS = 0; USE openmrs; SOURCE /opt/nafasi/sql/openmrs.sql; SET FOREIGN_KEY_CHECKS = 1;"
+
+# Start Tomcat
+echo "Starting Tomcat..."
+/opt/tomcat6/bin/startup.sh
+
+echo "Cue the funky music, we're live!"
+
+exit
