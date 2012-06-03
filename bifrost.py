@@ -7,6 +7,7 @@ import boto.ec2
 import os
 from github import Github
 import time
+from string import Template
 
 # Make sure these are set correctly
 username = "kenners" # your GitHub username
@@ -16,7 +17,7 @@ orgName = "uamuzibora" # Organisation that owns the repo
 awsKeyPair = "UamuziBora"
 # Do not change these!
 conn = None
-ami = "ami-7b93a90f" # The AMI ID of our base instance on EC2
+ami = "ami-eb76739f" # The AMI ID of our base instance on EC2
 dbRootPassword = "Out6Of7Africa42" # Password for root MySQL user on EC2 instance
 
 def usage():
@@ -179,11 +180,21 @@ def main():
             # Ok, now lets boot the EC2 image, pull this commit into the EC2 image and deploy it onto Tomcat
             print "Creating new EC2 instance based on " + ami
             conn = connectEC2()
+            # Let's get our bootstrap.sh script to pass into user_data
+            try:
+                bootstrap = open('bootstrap.sh', 'r')
+            except IOError:
+                    print >>stderr, "Error: cannot open bootstrap.sh"
+                    exit(2)
+            # Parse bootstrap.sh to add in our commit id and db root password for this instance
+            userdata = Template(bootstrap.read()).substitute(py_commit_id=commitId, py_db_root_password=dbRootPassword)
+            # Now create our instance
             reservation = conn.run_instances(image_id=ami, \
             key_name=awsKeyPair, \
             security_groups=["UBOpenMRS"], \
             instance_type="t1.micro", \
-            instance_initiated_shutdown_behavior="terminate")
+            instance_initiated_shutdown_behavior="terminate",
+            user_data=userdata)
             instance = reservation.instances[0]
             # Tag our new instance appropriately
             print "New instance is " + instance.id
@@ -196,23 +207,9 @@ def main():
                 time.sleep(2)
             if instance.state == 'running':
             	print "Instance " + instance.id + " (" + commitId[:7] +") is running. Public DNS is " + instance.public_dns_name
-                # Let's update the EC2 image
-                # cd /opt/nafasi
-                # git remote update
-                # git pull --all
-                # git checkout <commitid>
-                #try:
-                #    os.system("ssh -i " + sshKeyPath + " ubuntu@" + instance.public_dns_name + " " + updateScript)
-                #except Exception, err:
-                #    print >>stderr, err
-                #    sys.exit(2)
             else:
                 print >>stderr, "Error: Unexpected instance state: " + instance.state
                 sys.exit(2)
-                
-            # update mysql
-            # launch tomcat
-            
             sys.exit()
         elif opt in ("-S", "--stop"):
             # Stop the all the instances belonging to you
