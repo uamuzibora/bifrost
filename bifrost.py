@@ -8,6 +8,7 @@ import os
 from github import Github
 import time
 from string import Template
+import webbrowser
 
 # Make sure these are set correctly
 username = "kenners" # your GitHub username
@@ -21,7 +22,7 @@ ami = "ami-eb76739f" # The AMI ID of our base instance on EC2
 dbRootPassword = "Out6Of7Africa42" # Password for root MySQL user on EC2 instance
 
 def usage():
-    print >>stderr, """Usage: bifrost [--start] [--stop] [--list] [--dump] [--ssh]"""
+    print >>stderr, """Usage: bifrost [--start=] [--stop] [--list] [--dump] [--ssh] [--mosh] [--view]"""
     sys.exit()
 
 def activeInstances(label_tag, filters):
@@ -61,7 +62,7 @@ def main():
     
     # Parse arguments with getopt
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hldemSs:", ["help", "list", "dump", "ssh", "mosh", "stop", "start="])
+        opts, args = getopt.getopt(sys.argv[1:], "hldemvSs:", ["help", "list", "dump", "ssh", "mosh", "view", "stop", "start="])
     except getopt.GetoptError, err:
         print >>stderr, err
         usage()
@@ -141,7 +142,7 @@ def main():
                     sys.exit(2)
             sys.exit()
         elif opt in ("-m", "--mosh"):
-                # Open SSH connection to host
+                # Open Mosh connection to host
                 instances = findMyInstances(username)
                 if len(instances) == 0:
                     print >>stderr, "You have no running UB instances on EC2 to connect to."
@@ -152,6 +153,22 @@ def main():
                 else:
                     try:
                         os.system('mosh --ssh="ssh -i ' + sshKeyPath + '" ubuntu@' + instances[0][1])
+                    except Exception, err:
+                        print >>stderr, err
+                        sys.exit(2)
+                sys.exit()
+        elif opt in ("-v", "--view"):
+                # Opens a browser tab to view the running instance of OpenMRS
+                instances = findMyInstances(username)
+                if len(instances) == 0:
+                    print >>stderr, "You have no running UB instances on EC2 to connect to."
+                    sys.exit(2)
+                elif len(instances) > 1:
+                    print >>stderr, "You have >1 running UB instances on EC2 - I don't know which one to connect to. Please kill excess instances."
+                    sys.exit(2)
+                else:
+                    try:
+                        webbrowser.open_new_tab('http://' + instances[0][1] + ':8080/openmrs')
                     except Exception, err:
                         print >>stderr, err
                         sys.exit(2)
