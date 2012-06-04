@@ -115,7 +115,11 @@ def main():
                     sys.exit(2)
                 else:
                     try:
-                        os.system('ssh -i ' + sshKeyPath + ' ubuntu@' + instances[0][1] + ' "mysqldump -u root --password=' + dbRootPassword + ' --compact --single-transaction --order-by-primary openmrs > /tmp/openmrs.sql"')
+                        # IMPORTANT: The mysqldump has flag --default-character-set=latin1 as a workaround for MySQL Bug #28969
+                        # http://bugs.mysql.com/bug.php?id=28969
+                        # to workaround MySQL double-encoding UTF-8 content with mysqldump
+                        # The output *is* UTF-8 despite this flag
+                        os.system('ssh -i ' + sshKeyPath + ' ubuntu@' + instances[0][1] + ' "mysqldump -u root --password=' + dbRootPassword + ' --compact --single-transaction --order-by-primary --default-character-set=latin1 openmrs > /tmp/openmrs.sql"')
                     except Exception, err:
                         print >>stderr, err
                         sys.exit(2)
