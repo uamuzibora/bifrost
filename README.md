@@ -11,10 +11,8 @@ Command line interface for Uamuzi Bora test instances on EC2.
  * [Pip](http://www.pip-installer.org/en/latest/installing.html) - in order to install Boto & PyGithub.
   * `$ curl http://python-distribute.org/distribute_setup.py | python`
   * `$ curl https://raw.github.com/pypa/pip/master/contrib/get-pip.py | python`
- * [Boto](https://github.com/boto/boto)
-  * `$ pip install boto`
- * [PyGithub](https://github.com/jacquev6/PyGithub)
-  * `$ pip install PyGithub`
+ * [Boto](https://github.com/boto/boto): `$ pip install boto`
+ * [PyGithub](https://github.com/jacquev6/PyGithub): `$ pip install PyGithub`
  * _Optional:_ [Mosh](http://mosh.mit.edu) - If you want to use Mosh over SSH to connect to instances.
  * The UamuziBora keypair for EC2 - contact @kenners for this.
  * Your AWS credentials available in your environment (again, contact @kenners for this)
