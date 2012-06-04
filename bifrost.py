@@ -215,7 +215,7 @@ def main():
             conn = connectEC2()
             # Let's get our bootstrap.sh script to pass into user_data
             try:
-                bootstrap = open('bootstrap.sh', 'r')
+                bootstrap = open(os.path.dirname(__file__) + '/bootstrap.sh', 'r')
             except IOError:
                     print >>stderr, "Error: cannot open bootstrap.sh"
                     exit(2)
