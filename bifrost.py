@@ -18,7 +18,7 @@ orgName = "uamuzibora" # Organisation that owns the repo
 awsKeyPair = "UamuziBora"
 # Do not change these!
 conn = None
-ami = "ami-eb76739f" # The AMI ID of our base instance on EC2
+ami = "ami-0970757d" # The AMI ID of our base instance on EC2
 dbRootPassword = "Out6Of7Africa42" # Password for root MySQL user on EC2 instance
 
 def usage():
