@@ -186,7 +186,10 @@ def main():
             
             # Grab all the commits
             print "Indexing commits on GitHub..."
-            repoCommits = repo.get_commits()
+            repoCommits = {}
+            branches = repo.get_branches()
+            for branch in branches:
+                repoCommits[branch.name] = repo.get_commits(branch.commit.sha)
             
             # Find out if we're deploying HEAD or a specified commit
             if not commitId or commitId.lower() == 'head':
@@ -199,16 +202,17 @@ def main():
                 sys.exit(2)
             # Find if the specified commit id actually exists
             print "Checking to see if commit " + commitId + " exists on GitHub..."
-            for commit in repoCommits:
-                if commit.sha == commitId:
-                    commitExists = True
-                    break
-                # What about if we're using a short sha1 hash (i.e. first 7 characters)
-                elif commit.sha[:7] == commitId[:7]:
-                    commitExists = True
-                    # And now that we've found a commit, let's set our commitId to be the full length one
-                    commitId = commit.sha
-                    break
+            for bran in repoCommits:
+                for commit in repoCommits[bran]:
+                    if commit.sha == commitId:
+                        commitExists = True
+                        break
+                    # What about if we're using a short sha1 hash (i.e. first 7 characters)
+                    elif commit.sha[:7] == commitId[:7]:
+                        commitExists = True
+                        # And now that we've found a commit, let's set our commitId to be the full length one
+                        commitId = commit.sha
+                        break
             # Quit if we can't find our commit on GitHub
             if commitExists is False:
                 print >>stderr, "Error: Commit is not found on GitHub. Have you pushed your commit?"
