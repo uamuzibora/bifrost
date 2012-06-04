@@ -1,20 +1,23 @@
-## Bifrost
+# Bifrost
 
 _Connects our puny dev machines with Amazon's giant cloud._
 
 Command line interface for Uamuzi Bora test instances on EC2.
 
-### Prerequisites
+## Prerequisites
 
- * [Python](http://www.python.org/download/) 2.7.x (tested on 2.7.2)
-  * _Protip: Consider using [Pythonz](https://github.com/saghul/pythonz) if this means you'll end up with multiple Python installs._
+ * [Python](http://www.python.org/download/) 2.7.x
+  * _**Protip:** Consider using [Pythonz](https://github.com/saghul/pythonz) if this means you'll end up with multiple Python installs._
  * [Pip](http://www.pip-installer.org/en/latest/installing.html) - in order to install Boto & PyGithub.
   * `$ curl http://python-distribute.org/distribute_setup.py | python`
   * `$ curl https://raw.github.com/pypa/pip/master/contrib/get-pip.py | python`
- * [Boto](https://github.com/boto/boto): `$ pip install boto`
- * [PyGithub](https://github.com/jacquev6/PyGithub): `$ pip install PyGithub`
+ * [Boto](https://github.com/boto/boto)
+  * `$ pip install boto`
+ * [PyGithub](https://github.com/jacquev6/PyGithub)
+  * `$ pip install PyGithub`
  * _Optional:_ [Mosh](http://mosh.mit.edu) - If you want to use Mosh over SSH to connect to instances.
- * Your AWS credentials available in your environment:
+ * The UamuziBora keypair for EC2 - contact @kenners for this.
+ * Your AWS credentials available in your environment (again, contact @kenners for this)
 
 ```shell
 AWS_SECRET_ACCESS_KEY=xxxxxxxxxx
@@ -23,14 +26,24 @@ export AWS_SECRET_ACCESS_KEY
 export AWS_ACCESS_KEY_ID
 ```
 
-or better: define them in your `.bash_profile` or `.zshrc` e.g.
+**or better:** define them in your `.bash_profile` or `.zshrc` e.g.
 ```shell
-# AWS config
 export AWS_ACCESS_KEY_ID='xxxxxxxxxx'
 export AWS_SECRET_ACCESS_KEY='xxxxxxx'
 ```
 
-### Usage
+## Install
+
+Recommendation at this stage is to clone the repo and then add it to your path, ensuring that the `username` variable is set to **your** Github username and that the `sshKeyPath` points to wherever you put `UamuziBora.pem`.
+
+ 1. `$ git clone git@github.com:uamuzibora/bifrost.git`
+ 2. `$ export PATH=/path/to/bifrost/directory:$PATH`
+ 3. Update the [username](https://github.com/uamuzibora/bifrost/blob/master/bifrost.py#L14) variable in bifrost.py
+ 4. Update the [sshKeyPath](https://github.com/uamuzibora/bifrost/blob/add-bifrost-start/bifrost.py#L15) variable in bifrost.py
+ 5. Cue the funky music...
+  * e.g. `$ bifrost --start=head`
+
+## Usage
 
 NB: `<commit id>` refers to the **first 7 letters** of the SHA hash of a Git commit in [Nafasi](https://github.com/uamuzibora/nafasi)
 
