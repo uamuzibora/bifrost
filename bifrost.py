@@ -195,7 +195,7 @@ def main():
             if not commitId or commitId.lower() == 'head':
                 # Set commitId to be the *actual* sha1 hash rather than head
                 print "Finding SHA1 hash for HEAD on dev..."
-                commitId = repo.get_git_ref("refs/heads/dev").object['sha']
+                commitId = repo.get_git_ref("refs/heads/dev").object.sha
                 print "Found: HEAD on dev is " + commitId
             if len(commitId) < 7:
             	print >>stderr, "Error: Commit ID < 7 characters. You must specify 'HEAD' or at least the first 7 digits of the SHA1 commit ID hash in order to launch an instance."
