@@ -12,7 +12,6 @@ import webbrowser
 import subprocess
 
 # Make sure these are set correctly
-username = '' # your GitHub username (leave unset - Bifrost should find this automagically)
 sshKeyPath = "~/.ssh/UamuziBora.pem" # Path to wherever you put the UmauziBora.pem key
 repoName = "nafasi" # Repo name on GH
 orgName = "uamuzibora" # Organisation that owns the repo
@@ -21,6 +20,18 @@ awsKeyPair = "UamuziBora"
 conn = None
 ami = "ami-0970757d" # The AMI ID of our base instance on EC2
 dbRootPassword = "Out6Of7Africa42" # Password for root MySQL user on EC2 instance
+
+# Set our username as our GitHub username
+try:
+    ghuser = subprocess.check_output(['git', 'config', '--global', '--get', 'github.user'])
+except Exception:
+    print >>stderr, 'Error: unable to get GitHub username from: git config --global --get github.username'
+    sys.exit(2)
+username = ghuser.strip()
+if len(username)==0:
+    print >>stderr, 'Error: unable to get GitHub username from: git config --global --get github.username'
+    sys.exit(2)
+
 
 def usage():
     print >>stderr, """Usage: bifrost [--start=] [--stop] [--list] [--dump] [--ssh] [--mosh] [--view]"""
@@ -72,19 +83,6 @@ def main():
     # Check that we've only got one argument    
     if not opts or len(opts) > 1:
         print >>stderr, "Error: none or more than one arguments given"
-        sys.exit(2)
-    
-    # Find our Github username
-    try:
-        ghuser = subprocess.check_output(['git', 'config', '--global', '--get', 'github.user'])
-    except Exception:
-        print >>stderr, 'Error: unable to get GitHub username from: git config --global --get github.username'
-        sys.exit(2)
-
-    username = ghuser.strip()
-
-    if len(username)==0:
-        print >>stderr, 'Error: unable to get GitHub username from: git config --global --get github.username'
         sys.exit(2)
     
     aws_key = os.environ.get("AWS_ACCESS_KEY_ID")
