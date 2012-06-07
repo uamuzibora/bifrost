@@ -131,12 +131,12 @@ def main():
                         # http://bugs.mysql.com/bug.php?id=28969
                         # to workaround MySQL double-encoding UTF-8 content with mysqldump
                         # The output *is* UTF-8 despite this flag
-                        os.system('ssh -i ' + sshKeyPath + ' ubuntu@' + instances[0][1] + ' "mysqldump -u root --password=' + dbRootPassword + ' --compact --single-transaction --skip-extended-insert --order-by-primary --default-character-set=latin1 openmrs > /tmp/openmrs.sql"')
+                        subprocess.check_call('ssh -i ' + sshKeyPath + ' ubuntu@' + instances[0][1] + ' "mysqldump -u root --password=' + dbRootPassword + ' --compact --single-transaction --skip-extended-insert --order-by-primary --default-character-set=latin1 openmrs > /tmp/openmrs.sql"', shell=True)
                     except Exception, err:
                         print >>stderr, err
                         sys.exit(2)
                     try:
-                        os.system('scp -i ' + sshKeyPath + ' ubuntu@' + instances[0][1] + ':/tmp/openmrs.sql .')
+                        subprocess.check_call('scp -i ' + sshKeyPath + ' ubuntu@' + instances[0][1] + ':/tmp/openmrs.sql .', shell=True)
                     except Exception, err:
                         print >>stderr, err
                         sys.exit(2)
@@ -152,7 +152,7 @@ def main():
                 sys.exit(2)
             else:
                 try:
-                    os.system('ssh -i ' + sshKeyPath + ' ubuntu@' + instances[0][1])
+                    subprocess.check_call('ssh -i ' + sshKeyPath + ' ubuntu@' + instances[0][1], shell=True)
                 except Exception, err:
                     print >>stderr, err
                     sys.exit(2)
@@ -168,7 +168,7 @@ def main():
                     sys.exit(2)
                 else:
                     try:
-                        os.system('mosh --ssh="ssh -i ' + sshKeyPath + '" ubuntu@' + instances[0][1])
+                        subprocess.check_call('mosh --ssh="ssh -i ' + sshKeyPath + '" ubuntu@' + instances[0][1], shell=True)
                     except Exception, err:
                         print >>stderr, err
                         sys.exit(2)
