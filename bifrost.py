@@ -25,11 +25,11 @@ dbRootPassword = "Out6Of7Africa42" # Password for root MySQL user on EC2 instanc
 try:
     ghuser = subprocess.check_output(['git', 'config', '--global', '--get', 'github.user'])
 except Exception:
-    print >>stderr, 'Error: unable to get GitHub username from: git config --global --get github.username'
+    print >>stderr, 'Error: unable to get GitHub username from: git config --global --get github.user'
     sys.exit(2)
 username = ghuser.strip()
 if len(username)==0:
-    print >>stderr, 'Error: unable to get GitHub username from: git config --global --get github.username'
+    print >>stderr, 'Error: unable to get GitHub username from: git config --global --get github.user'
     sys.exit(2)
 
 
