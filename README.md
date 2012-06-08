@@ -32,11 +32,11 @@ export AWS_SECRET_ACCESS_KEY='xxxxxxx'
 
 ## Install
 
-Recommendation at this stage is to clone the repo and then add it to your path, ensuring that the `username` variable is set to **your** Github username and that the `sshKeyPath` points to wherever you put `UamuziBora.pem`.
+Recommendation at this stage is to clone the repo and then add it to your path, ensuring that the git config variable `github.user` is set to **your** Github username and that the `sshKeyPath` points to wherever you put `UamuziBora.pem`.
 
  1. `$ git clone git@github.com:uamuzibora/bifrost.git`
  2. `$ export PATH=/path/to/bifrost/directory:$PATH`
- 3. Update the [username](https://github.com/uamuzibora/bifrost/blob/master/bifrost.py#L14) variable in bifrost.py
+ 3. `$ git config --global github.user "<your Github username>"`
  4. Update the [sshKeyPath](https://github.com/uamuzibora/bifrost/blob/add-bifrost-start/bifrost.py#L15) variable in bifrost.py
  5. Cue the funky music...
   * e.g. `$ bifrost --start=head`
