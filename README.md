@@ -58,3 +58,14 @@ NB: `<commit id>` refers to the **first 7 letters** of the SHA hash of a Git com
 `$ bifrost --dump` Dumps the MySQL db of the instance associated with the commit and SCPs it to your current working directory as `openmrs.sql`.
 
 `$ bifrost --view` Opens your system's default browser at the root URL of your OpenMRS install on the instance.
+
+
+## Tip: ignoring SSH host keys
+
+Each time you fire up a new instance, the host will change.  This means that when you ssh in, you'll be asked to confirm another host key.  This ends up cluttering your known_hosts file (which is difficult to reverse if you have `HashKnownHosts` turned on).  The solution is to put this in your `~/.ssh/config`:
+
+    Host *.amazonaws.com
+        UserKnownHostsFile /dev/null
+        StrictHostKeyChecking no
+
+Please understand the security implications of this before doing so.
