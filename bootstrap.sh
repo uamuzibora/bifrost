@@ -45,7 +45,7 @@ if [ "$$COMMIT_ID" != "$$CURRENT_COMMIT_ID" ]
 fi
 
 # Copy our new version of OpenMRS into Tomcat's webapps directory
-cp -R /opt/nafasi/openmrs /opt/tomcat6/webapps/openmrs
+cp -R /opt/nafasi/openmrs /var/lib/tomcat7/webapps/openmrs
 
 # Update MySQL
 echo "Dropping existing openmrs db..."
@@ -57,8 +57,7 @@ mysql -u root --password=$$DB_ROOT_PASSWORD -e "SET FOREIGN_KEY_CHECKS = 0; USE 
 
 # Start Tomcat
 echo "Starting Tomcat..."
-/opt/tomcat6/bin/startup.sh
-
+sudo /etc/init.d/tomcat7 restart
 echo "Cue the funky music, we're live!"
 
 exit
