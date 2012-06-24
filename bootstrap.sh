@@ -46,6 +46,7 @@ fi
 
 # Copy our new version of OpenMRS into Tomcat's webapps directory
 cp -R /opt/nafasi/openmrs /var/lib/tomcat7/webapps/openmrs
+chown -R ubuntu.tomcat7 /var/lib/tomcat7/webapps/openmrs
 
 # Update MySQL
 echo "Dropping existing openmrs db..."
@@ -56,8 +57,8 @@ echo "Importing MySQL dump from Nafasi repo..."
 mysql -u root --password=$$DB_ROOT_PASSWORD -e "SET FOREIGN_KEY_CHECKS = 0; USE openmrs; SOURCE /opt/nafasi/sql/openmrs.sql; SET FOREIGN_KEY_CHECKS = 1;"
 
 # Start Tomcat
-echo "Starting Tomcat..."
-sudo /etc/init.d/tomcat7 restart
+echo "(Re)Starting Tomcat..."
+/etc/init.d/tomcat7 restart
 echo "Cue the funky music, we're live!"
 
 exit
