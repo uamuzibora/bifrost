@@ -30,11 +30,12 @@ cd /opt/nafasi
 # Update Git repo and checkout the specified commit
 echo "Updating Git remotes..."
 git remote update
+git reset --hard
 echo "Executing git pull..."
 git pull --all
 echo "Checking out $$COMMIT_ID..."
 git checkout $$COMMIT_ID
-git reset --hard
+
 
 # Check to see if we've successfully got the commit we wanted
 CURRENT_COMMIT_ID=`git rev-parse HEAD`
