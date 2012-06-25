@@ -245,7 +245,7 @@ def main():
             reservation = conn.run_instances(image_id=ami, \
             key_name=awsKeyPair, \
             security_groups=["UBOpenMRS"], \
-            instance_type="t1.micro", \
+            instance_type="m1.small", \
             instance_initiated_shutdown_behavior="terminate",
             user_data=userdata)
             instance = reservation.instances[0]
