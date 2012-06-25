@@ -46,7 +46,7 @@ fi
 
 # Copy our new version of OpenMRS into Tomcat's webapps directory
 cp -R /opt/nafasi/openmrs /var/lib/tomcat7/webapps/openmrs
-chown -R ubuntu.tomcat7 /var/lib/tomcat7/webapps/openmrs
+chown -R tomcat7.tomcat7 /var/lib/tomcat7/webapps/openmrs
 
 # Update MySQL
 echo "Dropping existing openmrs db..."
