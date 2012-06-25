@@ -22,7 +22,8 @@ if [ -z $$DB_ROOT_PASSWORD ]
 		echo "Usage: ./bootstrap.sh <git commit id> <mysql root password>"
     	exit 2
 fi
-
+echo "Stopping Tomcat"
+/etc/init.d/tomcat7 stop
 
 echo "Changing into /opt/nafasi"
 cd /opt/nafasi
@@ -59,7 +60,7 @@ mysql -u root --password=$$DB_ROOT_PASSWORD -e "SET FOREIGN_KEY_CHECKS = 0; USE 
 
 # Start Tomcat
 echo "(Re)Starting Tomcat..."
-/etc/init.d/tomcat7 restart
+/etc/init.d/tomcat7 start
 echo "Cue the funky music, we're live!"
 
 exit
