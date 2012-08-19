@@ -18,7 +18,7 @@ orgName = "uamuzibora" # Organisation that owns the repo
 awsKeyPair = "UamuziBora"
 # Do not change these!
 conn = None
-ami = "ami-3f4a4e4b" # The AMI ID of our base instance on EC2
+ami = "ami-d3babda7" # The AMI ID of our base instance on EC2
 dbRootPassword = "Out6Of7Africa42" # Password for root MySQL user on EC2 instance
 
 # Set our username as our GitHub username
@@ -184,7 +184,7 @@ def main():
                     sys.exit(2)
                 else:
                     try:
-                        webbrowser.open_new_tab('http://' + instances[0][1] + ':8080/openmrs')
+                        webbrowser.open_new_tab('https://' + instances[0][1] + '/openmrs')
                     except Exception, err:
                         print >>stderr, err
                         sys.exit(2)
