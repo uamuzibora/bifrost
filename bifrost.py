@@ -18,7 +18,7 @@ orgName = "uamuzibora" # Organisation that owns the repo
 awsKeyPair = "UamuziBora"
 # Do not change these!
 conn = None
-ami = "ami-d3babda7" # The AMI ID of our base instance on EC2
+ami = "ami-bd7a7cc9" # The AMI ID of our base instance on EC2
 dbRootPassword = "Out6Of7Africa42" # Password for root MySQL user on EC2 instance
 
 # Set our username as our GitHub username
@@ -244,7 +244,7 @@ def main():
             # Now create our instance
             reservation = conn.run_instances(image_id=ami, \
             key_name=awsKeyPair, \
-            security_groups=["UBOpenMRS"], \
+            security_groups=["UB"], \
             instance_type="m1.small", \
             instance_initiated_shutdown_behavior="terminate",
             user_data=userdata)
